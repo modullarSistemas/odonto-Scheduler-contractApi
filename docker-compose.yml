@@ -1,0 +1,14 @@
+version: '2.5'
+services:
+  planeja-odonto-worker:
+    build:
+      context: ./
+      target: dev
+    volumes:
+      - .:/src
+    command: npm run start
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DEBUG: nodejs-docker-express:*
