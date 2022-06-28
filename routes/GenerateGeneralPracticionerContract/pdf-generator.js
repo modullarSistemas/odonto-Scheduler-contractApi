@@ -8,7 +8,7 @@ const path = require('path');
 const { JSDOM } = jsdom;
 const puppeteer = require('puppeteer')
 
-router.get('/', async function(req, res, next) {    
+router.put('/', async function(req, res, next) {    
     
     const contentHtml = fs.readFileSync(path.resolve(__dirname, 'contract.html'), 'utf8');
     const dom = new JSDOM(contentHtml);
