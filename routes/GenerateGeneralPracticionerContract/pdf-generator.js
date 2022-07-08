@@ -1,5 +1,5 @@
 //https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
-
+//put html into string `${}` instead of manipulation DOM to substitute fields
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
