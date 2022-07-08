@@ -34,4 +34,104 @@ router.put('/', async function(req, res, next) {
 	res.send(pdf)
 });
 
+function getQuestionsHtml(questions) {
+    
+    let questionsHtml = "";
+    questions.forEach( (question) => {
+        if(question.type == "text") {
+          questionsHtml += this.getTextQuestionHtml(question)
+      }
+      
+      if(question.type == "checkbox") {
+          questionsHtml += this.getCheckboxQuestionHtml(question)
+      }
+      
+      if(question.type == "extended-checkbox"){
+          questionsHtml += this.getExtendedCheckboxQuestionHtml(question);
+      }
+      
+      if(question.type == "multiple-checkbox"){
+          questionsHtml += this.getExtendedCheckboxQuestionHtml(question);
+      }
+      
+    });
+}
+
+function getTextQuestionHtml(question) {
+	return ` 
+  <div>
+  	<p> ${question.question} </p>	
+  	<p> ${question.answer} </p>
+  </div>
+  `;
+}
+
+function getCheckboxQuestionHtml(question) {
+	let questionAnswser;
+  if(question.answer)
+  	questionAnswer = "SIM"
+  else
+  	questionAnswer = "NAO"
+  
+  return `
+  	  <div>
+  	<p> ${question.question} </p>	
+  	<p> ${questionAnswer} </p>
+  </div>
+  `
+}
+
+function getExtendedCheckboxQuestionHtml(question) {
+	let questionAnswer;
+    if(question.answer)
+  	questionAnswer = "SIM"
+  else
+  	questionAnswer = "NAO"
+    
+  if(!question.answer) {
+    return `
+  	 <div>
+  		<p> ${question.question} </p>	
+  		<p> ${questionAnswer} </p>
+  		</div>
+  		`;
+   }
+   
+  let extendedQuestionAnswer;
+  if(question.extension.answer)
+  	extendedQuestionAnswer = "SIM"
+  else
+  	extendedQuestionAnswer = "NAO"
+    
+   return `
+    	<div>
+  		<p> ${question.question} </p>	
+  		<p> ${questionAnswer} </p>
+  		<p> ${question.extension.question} </p>	
+  		<p> ${extendedQuestionAnswer} </p>
+  		</div>
+    `;
+   
+}
+
+function getMultipleCheckboxQUestionHtml(question) {
+	let multipleQuestions = "";
+	question.questionChoices.forEach( (question) => {
+  	let questionAnswer;
+    if(question.answer)
+  		questionAnswer = "SIM"
+  	else
+  		questionAnswer = "NAO"
+    
+    questionAnswer = `
+    	<div>
+        <p> ${question.question} </p>	
+        <p> ${questionAnswer} </p>
+  		</div>
+    `
+   	multipleQuestions += questionAnswer 
+  });
+  return multipleQuestions;
+}
+
 module.exports = router;
