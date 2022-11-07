@@ -7,32 +7,36 @@ const puppeteer = require('puppeteer')
 
 router.put('/', async function(req, res, next) {    
 
-    let treatment = req.body;
-    const contractHTMLGenerator = new ContractHTMLGenerator(treatment);
-    console.log("PRECISA DE PROCEDURES E INSTALlmeNTS E PATIENT")
-    console.log(treatmet);
-    let contentHtml = contractHTMLGenerator.generateHTML();
+    try {
+        let treatment = req.body;
+        const contractHTMLGenerator = new ContractHTMLGenerator(treatment);
+        let contentHtml = contractHTMLGenerator.generateHTML();
+        
+        const dom = new JSDOM(contentHtml);
+        const document = dom.window.document; 
+        
+        const browser = await puppeteer.launch({ 
+            headless: true, 
+            executablePath: '/usr/bin/chromium',    
+            args: [
+            "--no-sandbox",
+            "--disable-gpu"]
+        });
     
-    const dom = new JSDOM(contentHtml);
-    const document = dom.window.document; 
+        const page = await browser.newPage();
+        await page.setContent(document.documentElement.innerHTML);
     
-    const browser = await puppeteer.launch({ 
-        headless: true, 
-        executablePath: '/usr/bin/chromium',    
-        args: [
-        "--no-sandbox",
-        "--disable-gpu"]
-    });
-
-    const page = await browser.newPage();
-    await page.setContent(document.documentElement.innerHTML);
-
-    const pdf = await page.pdf({ path: `./files/contrato-tratamento-${treatment.id}.pdf`, format: 'A4' });
-    await browser.close();
-
-    res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
-	res.send(pdf);
+        const pdf = await page.pdf({ path: `./files/contrato-tratamento-${treatment.id}.pdf`, format: 'A4' });
+        await browser.close();
     
+        res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
+        res.send(pdf);
+        
+    }catch(ex){
+        console.log(ex);
+    }
+
+
 });
 
 module.exports = router;
