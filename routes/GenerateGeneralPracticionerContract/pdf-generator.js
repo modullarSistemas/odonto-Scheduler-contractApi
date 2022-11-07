@@ -7,9 +7,10 @@ const puppeteer = require('puppeteer')
 
 router.put('/', async function(req, res, next) {    
 
-    let treatment = req.body.treatment;
-
+    let treatment = req.body;
     const contractHTMLGenerator = new ContractHTMLGenerator(treatment);
+    console.log("PRECISA DE PROCEDURES E INSTALlmeNTS E PATIENT")
+    console.log(treatmet);
     let contentHtml = contractHTMLGenerator.generateHTML();
     
     const dom = new JSDOM(contentHtml);
@@ -29,10 +30,9 @@ router.put('/', async function(req, res, next) {
     const pdf = await page.pdf({ path: `./files/contrato-tratamento-${treatment.id}.pdf`, format: 'A4' });
     await browser.close();
 
-    //res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
-	res.send('LOL')
+    res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
+	res.send(pdf);
     
 });
-
 
 module.exports = router;
